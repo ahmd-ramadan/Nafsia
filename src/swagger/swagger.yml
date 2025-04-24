@@ -1,7 +1,8 @@
 openapi: 3.0.1
 servers:
   - url: http://localhost:8000/api/v1
-  - url: http://localhost:9000/api/v1
+  - url: https://localhost:8000/api/v1
+  - url: https://nafsia.up.railway.app/api/v1
 info:
     title: 'Nafsia APIs Document'
     version: '1.0.0'
@@ -562,7 +563,7 @@ paths:
         post:
             tags:
                 - Auth
-            summary: Reguster user/admin/doctor
+            summary: Register user/admin/doctor
             description: Register user/admin/doctor
             requestBody:
                 description: Register Object Body
@@ -913,7 +914,7 @@ paths:
         patch:
             tags:
                 - Tags
-            summary: Upadte Tag
+            summary: Update Tag
             description: admin update exist tag
             parameters:
                 - name: id
@@ -923,7 +924,7 @@ paths:
             security:
                 - bearerAuth: []
             requestBody:
-                description: Upadte Tag object
+                description: Update Tag object
                 content:
                     application/json:
                         schema:
@@ -1443,7 +1444,7 @@ paths:
         patch:
             tags:
                 - Appointments
-            summary: Upadte Appointment for doctor
+            summary: Update Appointment for doctor
             description: Doctor update exist his appointment
             parameters:
                 - name: id
@@ -1456,7 +1457,7 @@ paths:
             security:
                 - bearerAuth: []
             requestBody:
-                description: Upadte Appointment object
+                description: Update Appointment object
                 content:
                     application/json:
                         schema:
@@ -1832,7 +1833,7 @@ paths:
         patch:
             tags:
                 - Reviews
-            summary: Upadte Review
+            summary: Update Review
             description: User update exist his review
             parameters:
                 - name: id
@@ -1844,7 +1845,7 @@ paths:
             security:
                 - bearerAuth: []
             requestBody:
-                description: Upadte Review object
+                description: Update Review object
                 content:
                     application/json:
                         schema:
