@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=chillax@300,400,500,700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: 'Chillax', Arial, sans-serif;
+        background-color: #202225 !important;
+        margin: 0;
+        padding: 0;
+        color: #ffffff !important;
+      }
+      .container {
+        min-height: fit-content;
+        max-width: 600px;
+        margin: 20px auto;
+        background: #2c2f33 !important;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      .logo {
+        max-width: 50px;
+        margin-bottom: 5px;
+      }
+      h2,
+      p,
+      a {
+        color: #ffffff !important;
+      }
+      .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        color: #ffffff !important;
+        background-color: #007bff !important;
+        text-decoration: none;
+        border-radius: 5px;
+        margin-top: 20px;
+      }
+      .footer {
+        margin-top: 20px;
+        font-size: 12px;
+        color: #cccccc !important;
+      }
+    </style>
+  </head> 
+  <body>
+    <div class="container">
+      <img
+        src="https://res.cloudinary.com/dcgq0qrza/image/upload/v1743572306/ei_1743572234113-removebg-preview_pem9me.png"
+        alt="Nafsia Logo"
+        class="logo"
+      />
+      <h2 style="color: #ffffff !important">Email Verification</h2>
+      <p>Hello {{name}},</p>
+      <p>
+        Thank you for signing up. Please verify your email address by clicking
+        the button below.
+      </p>
+      <a href="{{verifyEmailUrl}}" class="btn">Verify Email</a>
+      <div class="footer">&copy; 2025 Nafsia. All rights reserved.</div>
+    </div>
+  </body>
+</html>

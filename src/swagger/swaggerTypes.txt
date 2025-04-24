@@ -1,0 +1,99 @@
+For type: string
+
+Property	Description
+minLength	Minimum number of characters
+maxLength	Maximum number of characters
+pattern	Regex pattern to match (e.g., for phone numbers, passwords)
+format	Predefined format (e.g., email, uuid, date, date-time, uri, binary)
+enum	List of allowed values
+example	Example value for documentation
+default	Default value if not provided
+
+-- Example:
+email:
+  type: string
+  format: email
+  example: "test@example.com"
+
+*************************************************
+
+🔢 For type: number / integer
+
+Property	Description
+minimum	Minimum value
+maximum	Maximum value
+exclusiveMinimum	Value must be greater than (not equal to) this
+exclusiveMaximum	Value must be less than (not equal to) this
+multipleOf	Value must be a multiple of this number
+example	Example value
+default	Default value
+
+-- Example:
+age:
+  type: integer
+  minimum: 18
+  maximum: 99
+
+**************************************************
+
+📦 For type: array
+
+Property	Description
+items	Schema for the items in the array
+minItems	Minimum number of items
+maxItems	Maximum number of items
+uniqueItems	Whether all items must be unique
+example	Example array
+
+-- Example:
+tags:
+  type: array
+  items:
+    type: string
+  minItems: 1
+  uniqueItems: true
+
+*************************************************
+🧱 For type: object
+
+Property	Description
+required	List of required property names
+properties	Define the fields of the object
+additionalProperties	Allow/disallow extra keys (true/false or schema)
+example	Example object
+
+-- Example:
+User:
+  type: object
+  required: [name, email]
+  properties:
+    name:
+      type: string
+    email:
+      type: string
+      format: email
+
+*************************************************
+
+🔁 Other Common Properties
+
+Property	Description
+description	Description for the field (shown in Swagger UI)
+deprecated	Mark the field as deprecated (not recommended to use)
+nullable	Whether the field can be null
+readOnly	Used only in responses (not in requests)
+writeOnly	Used only in requests (not in responses)
+title	    Short title
+default 	Default value
+
+************************************************
+🧠 TIP:
+You can combine all these properties smartly to make your API:
+
+Self-documenting
+
+Validated at runtime
+
+Easier to test and integrate
+
+If you want, I can create a full schema example using all the best practices mentioned above. Want me to generate a Register schema with all priorities applied?
