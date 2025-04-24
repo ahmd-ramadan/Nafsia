@@ -22,7 +22,7 @@ const morganLogger =
 
 app.get('/', (_, res) => {
     res.send(
-        '<div style="text-align: center; margin-top: 20px;"><h1>Welcome to Taskora API 🚀</h1></div>',
+        '<div style="text-align: center; margin-top: 20px;"><h1>Welcome to Nafsia API 🚀</h1></div>',
     );
 });
 
