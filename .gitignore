@@ -5,6 +5,7 @@ APis
 
 # Env
 *.env
+.env.local
 
 # Others 
 node_modules
