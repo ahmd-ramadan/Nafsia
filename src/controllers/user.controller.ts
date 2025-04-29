@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { userService } from "../services";
+import { authService, userService } from "../services";
 import { OK } from "../utils";
 import { AuthenticatedRequest } from "../interfaces";
 import { updateUserPasswordSchema, updateUserProfileSchema } from "../validation";

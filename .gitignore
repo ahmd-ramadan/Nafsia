@@ -1,0 +1,12 @@
+
+# Apis
+APis
+*.http
+
+# Env
+*.env
+
+# Others 
+node_modules
+logs
+dist
