@@ -37,16 +37,14 @@ class AuthService extends BaseAuthService {
                 })
                 userCredentials.avatar = { secure_url, public_id };
             }
-            const user = await this.createNewUser(userCredentials);
-            // const tokens = await this.generateAndStoreTokens(user._id);
+            const user = await this.createNewUser(userCredentials) as IUser;
+            const token = (await this.generateAndStoreTokens(user)).refreshToken;
     
             await this.sendVerificationEmail(user);
     
             return { 
-                data: { 
-                    user, 
-                    // hashedPassword 
-                }
+                user, 
+                token
             };
         } catch (error) {
             if (error instanceof ApiError) {
