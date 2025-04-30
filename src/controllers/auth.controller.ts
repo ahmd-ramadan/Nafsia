@@ -14,8 +14,10 @@ export const register = async (req: Request, res: Response) => {
     res.status(CREATED).json({
         success: true,
         message: 'تم إنشاء الحساب بنجاح ... توجه للإيميل لتأكيد الحساب',
-        data: userInfo.user,
-        token: userInfo.token,
+        data: {
+            user: userInfo.user,
+            token: userInfo.token
+        }
     });
 }
 
