@@ -32,7 +32,13 @@ savedPostsSchema.virtual('postsData', {
     localField: 'posts',
     foreignField: '_id',
     ref: 'Post',
-    justOne: false
+    justOne: false,
+    options: {
+        populate: {
+            path: 'doctorData',
+            select: 'name avatar _id'
+        }
+    }
 })
 
 export const SavedPosts = mongoose.model<ISavedPostsModel>('SavedPosts', savedPostsSchema);

@@ -5,7 +5,7 @@ import { postService } from "./post.service";
 
 class SavedPostsService {
 
-    private readonly populatedArray = ['postsData', 'userData'];
+    private readonly populatedArray = ['postsData'];
     constructor(private readonly savePostsDataSource = savedPostsRepository) {}
 
     async findSavedPostsByUserId(userId: string) {
