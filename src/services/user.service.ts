@@ -1,7 +1,7 @@
 import { cloudinaryAvatarsFolder } from "../config";
 import { ICreateUserQuery, IUserModel } from "../interfaces";
 import { userRepository } from "../repositories";
-import { ApiError, CONFLICT, NOT_FOUND } from "../utils";
+import { ApiError, CONFLICT, NOT_FOUND, pagenation } from "../utils";
 import { cloudinaryService } from "./cloudinary.service";
 import { doctorService } from "./doctor.service";
 import { HashingService } from "./hashing.service";
@@ -80,6 +80,22 @@ class UserService {
     
     async findDoctorUser(userId: string) {
         return await this.userDataSource.findByIdWithPopulate(userId, this.populateUserArray) 
+    }
+
+    async findAllUsers({ pageNumber, pageSize, role }: { pageNumber: number, pageSize: number, role?: string }) {
+        const { limit, skip } = pagenation({ page: pageNumber, size: pageSize });
+        let query: any = {}
+        if (role) query.role = role;
+        return this.userDataSource.findWithPopulate(query, this.populateUserArray, { skip, limit })
+    }
+
+    async searchDoctorsByName({ q, pageNumber, pageSize }: { q: string, pageNumber: number, pageSize: number }) {
+        const query = {
+            role: 'doctor',
+            name: { $regex: q, $options: 'i' }
+        }; 
+        const { limit, skip } = pagenation({ page: pageNumber, size: pageSize });
+        return await this.userDataSource.findWithPopulate(query, this.populateUserArray, { skip, limit });
     }
 }
 

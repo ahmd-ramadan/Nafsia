@@ -29,4 +29,5 @@ export interface ICreateUserQuery {
     gender?: UserGender,
     password: string,
     specialization?: string
+    medicalLicense?: ICloudinaryIMage
 }

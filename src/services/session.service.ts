@@ -89,7 +89,8 @@ class SessionService {
             const newCommunitSessionData = {
                 ... data,
                 status: SessionStatus.CONFIRMED,
-                type: SessionTypes.COMMUNITY
+                type: SessionTypes.COMMUNITY,
+                price: 0,
             }
             return await this.sessionDataSource.createOne(newCommunitSessionData, this.populatedArray); 
         } catch(error) {
@@ -186,14 +187,14 @@ class SessionService {
     async getAllSessions(query: any) {
         try {
             const { doctorId, userId, type, status, pageNumber: page, pageSize: size } = query;
-            let newQuey: any = {}
-            if (doctorId) newQuey.doctorId = doctorId;
-            if (userId) newQuey.participations = { $in: userId };
-            if (type) newQuey.type = type;
-            if (status) newQuey.status = status;
+            let newQuery: any = {}
+            if (doctorId) newQuery.doctorId = doctorId;
+            if (userId) newQuery.participations = { $in: userId };
+            if (type) newQuery.type = type;
+            if (status) newQuery.status = status;
             const { limit, skip } = pagenation({ page, size });
-            console.log(query);
-            return await this.sessionDataSource.findWithPopulate(query, this.populatedArray, { skip, limit })
+            console.log(newQuery);
+            return await this.sessionDataSource.findWithPopulate(newQuery, this.populatedArray, { skip, limit })
         } catch(error) {
             if (error instanceof ApiError) {
                 throw error;
@@ -202,5 +203,4 @@ class SessionService {
         }
     }
 }
-
 export const sessionService = new SessionService()

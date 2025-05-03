@@ -2,7 +2,7 @@ import { Response } from "express";
 import { authService, userService } from "../services";
 import { OK } from "../utils";
 import { AuthenticatedRequest } from "../interfaces";
-import { updateUserPasswordSchema, updateUserProfileSchema } from "../validation";
+import { getAllUsersSchema, paginationSchema, searchOnDoctorSchema, updateUserPasswordSchema, updateUserProfileSchema } from "../validation";
 
 
 export const getUserProfile = async (req: AuthenticatedRequest, res: Response) => {
@@ -44,3 +44,30 @@ export const updateUserPassword = async (req: AuthenticatedRequest, res: Respons
         message: 'تم تحديث كلمة المرور بنجاح',
     });
 };
+
+export const getAllUsers = async (req: AuthenticatedRequest, res: Response) => {
+    const { role } = getAllUsersSchema.parse(req.query);
+    const { pageNumber, pageSize } = paginationSchema.parse(req.query);
+
+    const allUsers = await userService.findAllUsers({ pageNumber, pageSize, role });
+
+    res.status(OK).json({ 
+        success: true,
+        message: 'تم إرجاع جميع المستخدمين المطلوبين بنجاح',
+        data: allUsers,
+    });
+};
+
+export const serchOnDoctor = async (req: AuthenticatedRequest, res: Response) => {
+    const { q } = searchOnDoctorSchema.parse(req.query);
+    const { pageNumber, pageSize } = paginationSchema.parse(req.query);
+
+    const allDoctors = await userService.searchDoctorsByName({ pageNumber, pageSize, q });
+
+    res.status(OK).json({ 
+        success: true,
+        message: 'تم إرجاع جميع الأخصائيين المطابقين  بنجاح',
+        data: allDoctors,
+    });
+};
+

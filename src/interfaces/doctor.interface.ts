@@ -1,3 +1,4 @@
+import { ICloudinaryIMage } from "./cloudinary.interface";
 import { IDBModel } from "./database.interface";
 import { IUserModel } from "./user.interface";
 
@@ -6,18 +7,14 @@ export interface IDoctorModel extends IDBModel {
     isApproved: boolean,
     specialization: string,
     rate: number,
-    balance: number
+    balance: number,
+    medicalLicense: ICloudinaryIMage,
 } 
 
-export interface IDoctor extends IDoctorModel {
-    userData: IUserModel,
-    isApproved: boolean,
-    specialization: string,
-    rate: number,
-    balance: number
-} 
+export interface IDoctor extends IDoctorModel {}
 
 export interface ICreateDoctorQuery {
     userId: string,
-    specialization: string
+    specialization: string,
+    medicalLicense: ICloudinaryIMage,
 }

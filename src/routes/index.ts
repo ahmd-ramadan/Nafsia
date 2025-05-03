@@ -8,6 +8,7 @@ import { reviewRouter } from './review.routes';
 import { savedPostsRouter } from './savedPosts.routes';
 import { reactRouter } from './react.routes';
 import { userRouter } from './user.routes';
+import { messageRouter } from './message.routes';
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use('/appointment', appointmentRouter)
 router.use('/session', sessionRouter)
 router.use('/review', reviewRouter)
 router.use('/saved-posts', savedPostsRouter)
+router.use('/message', messageRouter)
 
 export default router;

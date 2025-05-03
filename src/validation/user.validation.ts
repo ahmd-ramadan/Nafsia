@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { UserRolesEnum } from "../enums";
 
 export const updateUserProfileSchema = z
 .object({
@@ -31,4 +32,12 @@ export const updateUserPasswordSchema = z
                 'Password: 8+ chars, 1 number, 1 special, 1 lowercase or uppercase',
             )
             .trim(),
+})
+
+export const getAllUsersSchema = z.object({
+    role: z.nativeEnum(UserRolesEnum).optional(),
+})
+
+export const searchOnDoctorSchema = z.object({
+    q: z.string(),
 })

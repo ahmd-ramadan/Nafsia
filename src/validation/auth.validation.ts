@@ -24,7 +24,7 @@ export const registerSchema = z
         role: z.nativeEnum(UserRolesEnum),
         age: z.coerce.number().optional(),
         gender: z.nativeEnum(UserGender).optional(),
-        specialization: z.coerce.string().optional(),
+        specialization: z.coerce.string().optional()
     })
     .refine((data) => {
         if (data.role === UserRolesEnum.DOCTOR) {

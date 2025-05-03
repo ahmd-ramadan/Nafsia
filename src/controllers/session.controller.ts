@@ -45,7 +45,7 @@ export const confirmedPrivateSession = async(req: AuthenticatedRequest, res: Res
 }
 
 export const craeteCommunitySession = async(req: AuthenticatedRequest, res: Response) => {
-    const { duration, price, startAt, meetLink, seats } = createCommunitySessionSchema.parse(req.body);
+    const { duration, startAt, meetLink, seats } = createCommunitySessionSchema.parse(req.body);
 
     const doctorId = req?.user?.userId as string;
 
@@ -54,7 +54,6 @@ export const craeteCommunitySession = async(req: AuthenticatedRequest, res: Resp
         participations: [],
         duration,
         meetLink,
-        price,
         startAt,
         seats
     })
@@ -95,7 +94,6 @@ export const completeSession = async(req: AuthenticatedRequest, res: Response) =
 export const getAllSessions = async(req: AuthenticatedRequest, res: Response) => {
     const data = getAllSessionsSchema.parse(req.query);
     const { pageNumber, pageSize } = paginationSchema.parse(req.query);
-    const doctorId = req?.user?.userId as string;
 
     const allSessions = await sessionService.getAllSessions({ ...data, pageNumber, pageSize })
 

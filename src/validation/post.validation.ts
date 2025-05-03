@@ -16,7 +16,7 @@ export const createPostSchema = z.object({
 
 export const updatePostSchema = z.object({
     title: z.string().optional(),
-    content: z.string().optional(),
+    content: z.string() .optional(),
     tags: z
         .any()
         .transform((val) => {

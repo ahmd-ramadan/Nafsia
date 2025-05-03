@@ -11,7 +11,6 @@ export const createPrivateSessionSchema = z.object({
 export const createCommunitySessionSchema = z.object({
     startAt: z.coerce.date(),
     duration: z.number().int().positive(),
-    price: z.number().int().positive(),
     seats: z.number().positive().int(),
     meetLink: z.string()
 })

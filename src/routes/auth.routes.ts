@@ -9,7 +9,7 @@ const router = Router();
 
 router.post(
     '/register',
-    multerMiddleHost({}).array("image", 1),
+    multerMiddleHost({}).array("image", 3),
     asyncHandler(authCtrl.register)
 )
 router.get('/verify-email', asyncHandler(authCtrl.verifyEmail));

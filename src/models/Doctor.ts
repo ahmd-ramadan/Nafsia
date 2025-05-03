@@ -23,6 +23,10 @@ const doctorSchema = new Schema({
     balance: {
         type: Number,
         default: 0
+    },
+    medicalLicense: {
+        secure_url: String,
+        public_id: String
     }
 }, {
     timestamps: true,

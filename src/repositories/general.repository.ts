@@ -17,28 +17,53 @@ export default class GeneralRepository<T, Response = T> {
     //     return result;
     // }
 
+    // private async populateHelper<FunResponse>(
+    //     docPromise: Promise<any> | any,
+    //     populate?: PopulateType
+    // ): Promise<FunResponse | null> {
+    //     const result = await docPromise;
+      
+    //     if (!populate || !result) return result;
+      
+    //     if (typeof result.populate === 'function') {
+    //         const populated = await result.populate(populate);
+      
+          
+    //         if (typeof populated.exec === 'function') {
+    //             return await populated.exec();
+    //         }
+        
+    //         return populated;
+    //     }
+      
+    //     return result;
+    // }
+    
     private async populateHelper<FunResponse>(
         docPromise: Promise<any> | any,
         populate?: PopulateType
     ): Promise<FunResponse | null> {
         const result = await docPromise;
-      
+    
         if (!populate || !result) return result;
-      
+    
+        if (Array.isArray(result)) {
+            // Handle arrays of documents
+            return Promise.all(result.map(doc => doc.populate(populate))) as Promise<FunResponse>;
+        }
+    
         if (typeof result.populate === 'function') {
             const populated = await result.populate(populate);
-      
-          
+    
             if (typeof populated.exec === 'function') {
                 return await populated.exec();
             }
-        
+    
             return populated;
         }
-      
+    
         return result;
     }
-      
 
     async createOne(data: Partial<T>, populate?: PopulateType): Promise<Response | T> {
         const created = await this.dbClient.create(data);
@@ -71,8 +96,18 @@ export default class GeneralRepository<T, Response = T> {
         let dbQuery = this.dbClient.find(query);
         if (options?.skip) dbQuery = dbQuery.skip(options.skip);
         if (options?.limit) dbQuery = dbQuery.limit(options.limit);
-      
-        return await this.populateHelper<Response[]>(dbQuery, populate) as Response[];
+    
+        const nonPopulatedResponse = await this.populateHelper<Response[]>(dbQuery, populate) as Response[];
+        let populatedResponse: Response[] = [];
+        for(const r of nonPopulatedResponse) {
+            if (r) {
+                const response = await this.findOneWithPopulate(r, populate);
+                if (response) {
+                    populatedResponse.push(response);
+                }
+            }
+        }
+        return populatedResponse as Response[];
     }
       
 

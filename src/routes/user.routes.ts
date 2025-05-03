@@ -23,4 +23,13 @@ router.route('/')
         asyncHandler(userCtrl.updateUserProfile)
     )
 
+router.get(
+    '/all',
+    asyncHandler(userCtrl.getAllUsers)
+)
+router.get(
+    '/search',
+    asyncHandler(userCtrl.serchOnDoctor)
+)
+
 export { router as userRouter };

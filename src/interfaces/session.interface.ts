@@ -33,6 +33,5 @@ export interface ICreateCommunitySessionQuery {
     meetLink: string;
     startAt: Date;
     duration: number;
-    price: number;
     seats: number;
 } 

@@ -11,7 +11,7 @@ import { otpService } from "./otp.service";
 import { UserRolesEnum } from "../enums";
 import { doctorService } from "./doctor.service";
 import { cloudinaryService } from "./cloudinary.service";
-import { cloudinaryAvatarsFolder } from "../config";
+import { cloudinaryAvatarsFolder, cloudinaryLicensesFolder } from "../config";
 
 
 class AuthService extends BaseAuthService {
@@ -37,6 +37,13 @@ class AuthService extends BaseAuthService {
                 })
                 userCredentials.avatar = { secure_url, public_id };
             }
+            if(files && files.length > 1 ) {
+                const { secure_url, public_id } = await cloudinaryService.uploadImage({
+                    fileToUpload: files[1].path,
+                    folderPath: cloudinaryLicensesFolder
+                })
+                userCredentials.medicalLicense = { secure_url, public_id };
+            }
             const user = await this.createNewUser(userCredentials) as IUser;
             const token = (await this.generateAndStoreTokens(user)).refreshToken;
     
@@ -56,13 +63,13 @@ class AuthService extends BaseAuthService {
 
     private async createNewUser(data: ICreateUserQuery) {
         if ( data.role === UserRolesEnum.DOCTOR) {
-            const { specialization } = data;
-            if (!specialization) {
+            const { specialization, medicalLicense } = data;
+            if (!specialization || !medicalLicense) {
                 throw new ApiError('تخصص الدكتور مطلوب', BAD_REQUEST)
             }
 
             let user = await userService.createNewUser(data) as IUser
-            const doctor = await doctorService.createNewDoctor({ specialization, userId: user?._id }) as IDoctor; 
+            const doctor = await doctorService.createNewDoctor({ specialization, medicalLicense, userId: user?._id }) as IDoctor; 
 
             if (!user || !doctor) {
                 throw new ApiError('فشل عملية إنشاء الحساب', BAD_REQUEST)
