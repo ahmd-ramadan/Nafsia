@@ -149,8 +149,13 @@ components:
                     items:
                         type: string
                         format: binary
-                    description: صورة الملف الشخصي   
-        
+                    description: صورة الملف الشخصي  
+                image: 
+                    type: array
+                    items:
+                        type: string
+                        format: binary
+                    description: صورة الرخصة الطبية للطبيب 
         Login:
             type: "object"
             required: 
@@ -287,13 +292,19 @@ components:
                 duration: 
                     type: "number"
                     example: 30
-                price: 
-                    type: "number"
-                    example: 300
                 seats: 
                     type: "number"
                     example: 25
-        
+
+        AddCommunitySessionMessage: 
+            type: "object"
+            properties:
+                messge: 
+                    type: "string"
+                sessionId: 
+                    type: string
+                    example: "67feb22c5fba7d39fcaecb40"
+
         AddReview: 
             type: "object"
             required:
@@ -312,7 +323,7 @@ components:
                 comment: 
                     type: "string"
                     example: "لقد أستفدت جدا من توجيهات الدكتور"
-       
+
         # All Documents Scheams
         GeneralDocument: 
             type: "object"
@@ -379,6 +390,13 @@ components:
                 balance: 
                     type: "number"
                     example: 1000
+                medicalLicense: 
+                    type: "object"
+                    properties:
+                        secure_url: 
+                            type: "string"
+                        public_id: 
+                            type: "string"
 
         Tag: 
             allOf:
@@ -529,6 +547,17 @@ components:
                     doctorData: 
                         type: "object"
                         $ref: "#/components/schemas/User"
+
+        Message: 
+            allOf: 
+                - $ref: "#/components/schemas/GeneralDocument"
+                - type: "object"
+                  properties:
+                    messge: 
+                        type: "string"
+                    sessionId: 
+                        type: string
+                        example: "67feb22c5fba7d39fcaecb40"
 
         Review: 
             allOf: 
@@ -853,7 +882,72 @@ paths:
                                             example: "تم إرجاع بيانات المستخدم بنجاح!"
                                         data:
                                             $ref: "#/components/schemas/User"
-
+    
+    /user/all:
+        get:
+            tags:
+                - Users
+            summary: Get All Users
+            description: Any user can get any users by role ["doctor", "user"]
+            parameters:    
+                - name: role
+                  in: query
+                  schema:
+                    type: string
+                    enum: ["user", "doctor"]
+                  required: true
+                  example: doctor
+            responses:
+                200:
+                    description: successful operation
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: "#/components/schemas/ApiResponseBase"
+                                    - type: object
+                                      properties:
+                                        success:
+                                            example: "true"
+                                        message:
+                                            example: "تم إرجاع المستخدمين المطلوبين بنجاح!"
+                                        data:
+                                            type: "array"
+                                            items:
+                                                $ref: "#/components/schemas/User"
+        
+    /user/search:
+        get:
+            tags:
+                - Users
+            summary: Search On Doctors
+            description: Any user can search any doctor by name
+            parameters:    
+                - name: q
+                  in: query
+                  schema:
+                    type: string
+                  required: true
+                  example: ahmed
+            responses:
+                200:
+                    description: successful operation
+                    content:
+                        application/json:
+                                schema:
+                                allOf:
+                                    - $ref: "#/components/schemas/ApiResponseBase"
+                                    - type: object
+                                      properties:
+                                        success:
+                                            example: "true"
+                                        message:
+                                            example: "تم إرجاع الأطباء المطابقين بنجاح!"
+                                        data:
+                                            type: "array"
+                                            items:
+                                                $ref: "#/components/schemas/User"
+        
     # Tags Routes
     /tag:
         post:
@@ -1748,6 +1842,141 @@ paths:
                                         data:
                                             $ref: "#/components/schemas/Session"
 
+    # Message
+    /message:
+        post:
+            tags:
+                - Messages
+            summary: Add Message
+            description: Doctor add message on his community session
+            security:
+                - bearerAuth: []
+            requestBody:
+                description: Add Message object
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/AddCommunitySessionMessage"
+            responses:
+                201:
+                    description: successful operation
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: "#/components/schemas/ApiResponseBase"
+                                    - type: object
+                                      properties:
+                                        success:
+                                            example: "true"
+                                        message:
+                                            example: "تم إضافة الرسالة بنجاح!"
+                                        data:
+                                            $ref: "#/components/schemas/Message"
+
+    /message/{id}:
+        patch:
+            tags:
+                - Messages
+            summary: Update Message
+            description: Doctor update exist his message on his community session
+            parameters:
+                - name: id
+                  in: path
+                  description: Message ID
+                  required: true
+            security:
+                - bearerAuth: []
+            requestBody:
+                description: Update Message object
+                content:
+                    application/json:
+                        schema:
+                            type: "object"
+                            properties:
+                                message: 
+                                    type: "string"
+            responses:
+                200:
+                    description: successful operation
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: "#/components/schemas/ApiResponseBase"
+                                    - type: object
+                                      properties:
+                                        success:
+                                            example: true
+                                        message:
+                                            example: "تم تحديث الرسالة بنجاح!"
+                                        data:
+                                            $ref: "#/components/schemas/Message"
+        
+        delete:
+            tags:
+                - Messages
+            summary: Delete Message
+            description: Doctor delete exist his message on his session
+            parameters:
+                - name: id
+                  in: path
+                  description: Message ID
+                  required: true
+            security:
+                - bearerAuth: []
+            responses:
+                200:
+                    description: successful operation
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: "#/components/schemas/ApiResponseBase"
+                                    - type: object
+                                      properties:
+                                        success:
+                                            example: true
+                                        message:
+                                            example: "تم حذف الرسالة بنجاح!"
+                                        data:
+                                            type: "object"
+                                            properties:
+                                                messageId: 
+                                                    type: "string"
+                                                    example: "67ef9ba961a3840f1d2888db"
+        
+        get: 
+            tags:
+                - Messages
+            summary: Get All Messages 
+            description: Any user can get messages on his community session
+            parameters:
+                - name: id
+                  in: path
+                  description: Session ID
+                  schema:
+                    type: string
+                  required: true
+            responses:
+                200:
+                    description: successful operation
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: "#/components/schemas/ApiResponseBase"
+                                    - type: object
+                                      properties:
+                                        success:
+                                            example: true
+                                        message:
+                                            example: "تم إرجاع كل الرسائل المطلوبة بنجاح!"
+                                        data:
+                                            type: array
+                                            items:
+                                                $ref: "#/components/schemas/Message"
+    
     # Review Routes
     /review:
         post:
