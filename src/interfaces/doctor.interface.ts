@@ -9,6 +9,7 @@ export interface IDoctorModel extends IDBModel {
     rate: number,
     balance: number,
     medicalLicense: ICloudinaryIMage,
+    description: string,
 } 
 
 export interface IDoctor extends IDoctorModel {}
@@ -17,4 +18,5 @@ export interface ICreateDoctorQuery {
     userId: string,
     specialization: string,
     medicalLicense: ICloudinaryIMage,
+    description?: string,
 }

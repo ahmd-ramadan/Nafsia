@@ -11,7 +11,7 @@ const savedPostsSchema = new Schema({
     posts: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'Product',
+            ref: 'Post',
             required: true
         }
     ]

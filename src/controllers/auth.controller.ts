@@ -6,10 +6,10 @@ import { AuthenticatedRequest } from "../interfaces";
 
 
 export const register = async (req: Request, res: Response) => {
-    const { name, email, password, phone, gender, age, role, specialization } = registerSchema.parse(req.body);
+    const { name, email, password, phone, gender, age, role, specialization, description } = registerSchema.parse(req.body);
     const files = req.files;
     
-    const userInfo = await authService.register({ data: { name, email, password, phone, gender, age, role, specialization }, files });
+    const userInfo = await authService.register({ data: { name, email, password, phone, gender, age, role, specialization, description }, files });
 
     res.status(CREATED).json({
         success: true,

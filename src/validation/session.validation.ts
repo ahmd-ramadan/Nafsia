@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { MongoDBObjectId } from "../utils";
-import { SessionStatus } from "../enums";
+import { SessionStatus, SessionTypes } from "../enums";
 
 export const createPrivateSessionSchema = z.object({
     appointmentId: z.string().regex(MongoDBObjectId, 'مَعرف الموعد غير صحيح'),
@@ -22,6 +22,6 @@ export const confirmPrivateSessionSchema = z.object({
 export const getAllSessionsSchema = z.object({
     doctorId: z.string().regex(MongoDBObjectId, "مَعرف الدكتور غير صحيح").optional(),
     userId: z.string().regex(MongoDBObjectId, "مَعرف الدكتور غير صحيح").optional(),
-    type: z.nativeEnum(SessionStatus).optional(),
+    type: z.nativeEnum(SessionTypes).optional(),
     status: z.nativeEnum(SessionStatus).optional(),
 })

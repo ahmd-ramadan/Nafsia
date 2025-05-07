@@ -14,6 +14,7 @@ export const updateUserProfileSchema = z
         .trim().optional(),
     age: z.coerce.number().optional(),
     specialization: z.coerce.string().optional(),
+    description: z.coerce.string().optional(),
 })
 
 export const updateUserPasswordSchema = z

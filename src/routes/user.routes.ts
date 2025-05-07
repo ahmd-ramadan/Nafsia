@@ -19,7 +19,10 @@ router.route('/')
     .patch(
         isAuthunticated,
         isAuthorized(manageUser),
-        multerMiddleHost({}).array("image", 1),
+        multerMiddleHost({}).fields([
+            { name: "avatar", maxCount: 1 },
+            { name: "medicalLicense", maxCount: 1 }
+        ]),
         asyncHandler(userCtrl.updateUserProfile)
     )
 

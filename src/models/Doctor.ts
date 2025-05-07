@@ -27,6 +27,11 @@ const doctorSchema = new Schema({
     medicalLicense: {
         secure_url: String,
         public_id: String
+    },
+    description: {
+        type: String,
+        trim: true,
+        default: ''
     }
 }, {
     timestamps: true,

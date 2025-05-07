@@ -17,7 +17,7 @@ import { cloudinaryAvatarsFolder, cloudinaryLicensesFolder } from "../config";
 class AuthService extends BaseAuthService {
     
     async register(
-       { data : { name, email, password, phone, age, gender, role, specialization }, files } : { data: ICreateUserQuery, files: any } 
+       { data : { name, email, password, phone, age, gender, role, specialization, description }, files } : { data: ICreateUserQuery, files: any } 
     ) {
         try {
             const userExists = await userService.findUserByEmail(email);
@@ -28,18 +28,18 @@ class AuthService extends BaseAuthService {
     
             const hashedPassword = await HashingService.hash(password);
             
-            
             const userCredentials: ICreateUserQuery = { name, email, password: hashedPassword, phone, age, gender, role, specialization };
-            if(files && files.length ) {
+            // console.log(files)
+            if(files && files?.avatar?.length ) {
                 const { secure_url, public_id } = await cloudinaryService.uploadImage({
-                    fileToUpload: files[0].path,
+                    fileToUpload: files.avatar[0].path,
                     folderPath: cloudinaryAvatarsFolder
                 })
                 userCredentials.avatar = { secure_url, public_id };
             }
-            if(files && files.length > 1 ) {
+            if(files && files?.medicalLicense?.length ) {
                 const { secure_url, public_id } = await cloudinaryService.uploadImage({
-                    fileToUpload: files[1].path,
+                    fileToUpload: files.medicalLicense[0].path,
                     folderPath: cloudinaryLicensesFolder
                 })
                 userCredentials.medicalLicense = { secure_url, public_id };
@@ -63,13 +63,16 @@ class AuthService extends BaseAuthService {
 
     private async createNewUser(data: ICreateUserQuery) {
         if ( data.role === UserRolesEnum.DOCTOR) {
-            const { specialization, medicalLicense } = data;
-            if (!specialization || !medicalLicense) {
+            const { specialization, medicalLicense, description } = data;
+            if (!specialization) {
                 throw new ApiError('تخصص الدكتور مطلوب', BAD_REQUEST)
+            }
+            if (!medicalLicense) {
+                throw new ApiError('شهادة الدكتور مطلوبة', BAD_REQUEST)
             }
 
             let user = await userService.createNewUser(data) as IUser
-            const doctor = await doctorService.createNewDoctor({ specialization, medicalLicense, userId: user?._id }) as IDoctor; 
+            const doctor = await doctorService.createNewDoctor({ specialization, medicalLicense, userId: user?._id, description }) as IDoctor; 
 
             if (!user || !doctor) {
                 throw new ApiError('فشل عملية إنشاء الحساب', BAD_REQUEST)

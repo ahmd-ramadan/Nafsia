@@ -17,7 +17,7 @@ const postSchema = new Schema({
     title: {
         type: String,
         required: true,
-        trime: true
+        trim: true
     },
     content: {
         type: String,
@@ -49,9 +49,10 @@ postSchema.virtual('doctorData', {
     foreignField: '_id',
     justOne: true,
     options: { 
-        select: 'name avatar _id' 
+        select: 'name avatar _id createdAt doctorData' 
     }
 });
+
 postSchema.virtual('tagsData', {
     ref: 'Tag',
     localField: 'tags',
@@ -61,6 +62,7 @@ postSchema.virtual('tagsData', {
         select: 'name _id' 
     }
 });
+
 postSchema.virtual('reactionsData', {
     ref: 'React',
     localField: '_id',

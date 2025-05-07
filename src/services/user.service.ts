@@ -1,5 +1,5 @@
-import { cloudinaryAvatarsFolder } from "../config";
-import { ICreateUserQuery, IUserModel } from "../interfaces";
+import { cloudinaryAvatarsFolder, cloudinaryLicensesFolder } from "../config";
+import { ICreateUserQuery, IDoctorModel, IUserModel } from "../interfaces";
 import { userRepository } from "../repositories";
 import { ApiError, CONFLICT, NOT_FOUND, pagenation } from "../utils";
 import { cloudinaryService } from "./cloudinary.service";
@@ -30,23 +30,39 @@ class UserService {
         return await this.userDataSource.updateOne({ _id: userId }, data, this.populateUserArray)
     }
 
-    async updateProfile({ userId, data, files }: { userId: string, data: Partial<IUserModel> & { specialization?: string }, files: any }) {
-        const { name, age, phone, specialization } = data;
+    async updateProfile({ userId, data, files }: { userId: string, data: Partial<IUserModel> & { specialization?: string, description?: string }, files: any }) {
+        const { name, age, phone, specialization, description } = data;
 
-        const { avatar } = await this.isUserExist(userId);
+        const { avatar, doctorData: { medicalLicense } } = await this.isUserExist(userId);
 
         const updatedData: Partial<IUserModel> = {}
         if (name) updatedData.name = name;
         if (age) updatedData.age = age;
         if (phone) updatedData.phone = phone;
 
-        if (specialization) {
-            await doctorService.updateOne({ userId, data: { specialization } });
-        }
-
-        if (files && files.length) {
+        const updatedDoctorData: Partial<IDoctorModel> = {}
+        if(specialization) updatedDoctorData.specialization = specialization;
+        if(description) updatedDoctorData.description = description;
+        if(files && files?.medicalLicense?.length) {
             const { secure_url, public_id } = await cloudinaryService.uploadImage({ 
-                fileToUpload: files[0].path,
+                fileToUpload: files.medicalLicense[0].path,
+                folderPath: cloudinaryLicensesFolder 
+            });
+            if (medicalLicense?.secure_url && medicalLicense?.public_id) {
+                await cloudinaryService.deleteImage(medicalLicense?.public_id);
+            }
+            updatedDoctorData.medicalLicense = {
+                secure_url,
+                public_id
+            }
+        }
+        if (Object.keys(updatedDoctorData).length > 0) {
+            await doctorService.updateOne({ userId, data: updatedDoctorData });
+        }
+        
+        if (files && files?.avatar?.length) {
+            const { secure_url, public_id } = await cloudinaryService.uploadImage({ 
+                fileToUpload: files.avatar[0].path,
                 folderPath: cloudinaryAvatarsFolder 
             });
             if (avatar?.secure_url && avatar?.public_id) {
@@ -57,7 +73,6 @@ class UserService {
                 public_id
             }
         }
-
         return await this.updateOne({ userId, data: updatedData })
     }
 

@@ -7,7 +7,7 @@ import { sessionService } from "./session.service";
 
 class ReviewService {
 
-    private readonly populatedArray = ['doctortData', 'userData'];
+    private readonly populatedArray = ['doctorData', 'userData'];
 
     constructor(private readonly reviewDataSource = reviewRepository){}
 
@@ -145,6 +145,7 @@ class ReviewService {
 
             return await this.reviewDataSource.findWithPopulate(query, this.populatedArray, { limit, skip });
         } catch(error) {
+            console.log(error);
             if (error instanceof ApiError) {
                 throw error;
             }

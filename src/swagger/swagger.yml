@@ -144,13 +144,16 @@ components:
                 specialization: 
                     type: "string"
                     example: "الإكتئاب"
-                image:
-                    type: array
+                description:
+                    type: "string"
+                    example: "معالج طبيب عام ..."
+                avatar:
+                    type: "array"
                     items:
                         type: string
                         format: binary
                     description: صورة الملف الشخصي  
-                image: 
+                medicalLicense: 
                     type: array
                     items:
                         type: string
@@ -192,13 +195,23 @@ components:
                 specialization: 
                     type: "string"
                     example: "الإكتئاب"
-                image:
-                    type: array
+                description:
+                    type: "string"
+                    example: "معالج طبيب عام ..."
+                avatar:
+                    type: "array"
                     items:
                         type: string
                         format: binary
                     description: صورة الملف الشخصي 
+                medicalLicense: 
+                    type: array
+                    items:
+                        type: string
+                        format: binary
+                    description: صورة الرخصة الطبية للطبيب 
         
+
         UpdatePassword: 
             type: "object"
             properties:
@@ -227,12 +240,12 @@ components:
                     type: string
                     example: هذا المقال يتحدث عن أهمية...
                 tags:
-                    type: array
+                    type: "array"
                     items:
                         type: string
                     example: ["67ef9ba961a3840f1d2888db"]
                 image:
-                    type: array
+                    type: "array"
                     items:
                         type: string
                         format: binary
@@ -387,6 +400,9 @@ components:
                     example: true
                 specialization: 
                     type: "string"
+                description:
+                    type: "string"
+                    example: "معالج طبيب عام ..."
                 balance: 
                     type: "number"
                     example: 1000
@@ -1000,7 +1016,7 @@ paths:
                                     message:
                                         example: "تم إرجاع الوسوم بنجاح!"
                                     data:
-                                        type: array
+                                        type: "array"
                                         items:
                                         $ref: "#/components/schemas/Tag"
     
@@ -1038,7 +1054,7 @@ paths:
                                         message:
                                             example: "تم تحديث الوسم بنجاح!"
                                         data:
-                                            type: array
+                                            type: "array"
                                             items:
                                                 $ref: "#/components/schemas/Tag"
         delete:
@@ -1530,7 +1546,7 @@ paths:
                                     message:
                                         example: "تم إرجاع كل مواعيد الدكتور بنجاح بنجاح!"
                                     data:
-                                        type: array
+                                        type: "array"
                                         items:
                                         $ref: "#/components/schemas/Appointment"
 
@@ -1571,7 +1587,7 @@ paths:
                                         message:
                                             example: "تم تحديث الموعد بنجاح!"
                                         data:
-                                            type: array
+                                            type: "array"
                                             items:
                                                 $ref: "#/components/schemas/Appointment"
         delete:
@@ -1973,7 +1989,7 @@ paths:
                                         message:
                                             example: "تم إرجاع كل الرسائل المطلوبة بنجاح!"
                                         data:
-                                            type: array
+                                            type: "array"
                                             items:
                                                 $ref: "#/components/schemas/Message"
     
@@ -2054,9 +2070,9 @@ paths:
                                     message:
                                         example: "تم إرجاع كل المراجاعات الطلوبة بنجاح!"
                                     data:
-                                        type: array
+                                        type: "array"
                                         items:
-                                        $ref: "#/components/schemas/Review"
+                                            $ref: "#/components/schemas/Review"
     
     /review/{id}:
         patch:
@@ -2105,7 +2121,7 @@ paths:
                                         message:
                                             example: "تم تحديث المراجعة بنجاح!"
                                         data:
-                                            type: array
+                                            type: "array"
                                             items:
                                                 $ref: "#/components/schemas/Review"
         delete:
