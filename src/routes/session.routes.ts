@@ -51,5 +51,10 @@ router.patch(
     asyncHandler(sessionCtrl.completeSession)
 )
 
+router.get(
+    '/:_id',
+    asyncHandler(sessionCtrl.getSessionById)
+)
+
 
 export { router as sessionRouter };

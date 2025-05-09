@@ -36,7 +36,9 @@ savedPostsSchema.virtual('postsData', {
     options: {
         populate: {
             path: 'doctorData',
-            select: 'name avatar _id'
+            populate: {
+                path: 'doctorData',
+            }
         }
     }
 })

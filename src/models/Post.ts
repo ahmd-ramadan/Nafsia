@@ -49,7 +49,10 @@ postSchema.virtual('doctorData', {
     foreignField: '_id',
     justOne: true,
     options: { 
-        select: 'name avatar _id createdAt doctorData' 
+        select: 'name avatar _id createdAt',
+        populate: {
+            path: 'doctorData',
+        }
     }
 });
 
@@ -69,7 +72,9 @@ postSchema.virtual('reactionsData', {
     foreignField: 'postId',
     justOne: false,
     options: { 
-        select: 'userData' 
+        populate: {
+            path: 'userData',
+        }
     }
 });
 

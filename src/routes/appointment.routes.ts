@@ -25,6 +25,9 @@ router.route('/:_id')
         isAuthunticated,
         isAuthorized(manageAppointment),
         asyncHandler(appointmantCtrl.deleteAppointment)
+    )
+    .get(
+        asyncHandler(appointmantCtrl.getAppointmentById)
     );
 
 export { router as appointmentRouter };

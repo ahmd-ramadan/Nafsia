@@ -1,5 +1,4 @@
 import mongoose, { Schema } from 'mongoose'
-import { DayOfWeek } from '../enums'
 import { IAppointmentModel } from '../interfaces';
 import { AppointmentStartTime } from '../utils';
 
@@ -11,13 +10,7 @@ const appointmentSchema = new Schema({
         index: true
     },
     day: {
-        type: String,
-        enum: Object.values(DayOfWeek),
-        required: true
-    },
-    startAtHour: {
-        type: String,
-        RegExp: AppointmentStartTime,
+        type: Date,
         required: true
     },
     duration: {
@@ -27,7 +20,25 @@ const appointmentSchema = new Schema({
     price: {
         type: Number,
         required: true
-    }
+    },
+    schedule: [
+        {
+            startAt: {
+                type: String,
+                RegExp: AppointmentStartTime,
+                required: true
+            },
+            isBooked: {
+                type: Boolean,
+                default: false
+            },
+            sessionId: {
+                type: Schema.Types.ObjectId,
+                ref: 'Session',
+                required: false
+            }
+        }
+    ]
 }, {
     timestamps: true,
     versionKey: false,
@@ -41,9 +52,11 @@ appointmentSchema.virtual('doctorData', {
     foreignField: '_id',
     justOne: true,
     options: { 
-        select: 'name avatar _id' 
+        // select: 'name avatar _id',
+        populate: {
+            path: 'doctorData',
+        }
     }
 });
-
 
 export const Appointment = mongoose.model<IAppointmentModel>('Appointment', appointmentSchema);

@@ -266,9 +266,10 @@ components:
             type: "object"
             properties:
                 day: 
-                    type: "string"
-                    enum: ["sat", "sun", "mon", "tue", "wed", "thu", "fri"]
-                    example: "fri"
+                    type: "date"
+                    examle: "2025-04-20T20:50:13.034Z"
+                    # enum: ["sat", "sun", "mon", "tue", "wed", "thu", "fri"]
+                    # example: "fri"
                 startAtHour: 
                     type: "string"
                     example: "05:30"
@@ -279,16 +280,22 @@ components:
                 price: 
                     type: "number"
                     example: 200
-        
+                schedule:
+                    type: "array"
+                    items:
+                        type: "object"
+                        $ref: "#/components/schemas/AppointmentSchedule"   
+
         CreatePrivateSession: 
             type: "object"
             properties:
                 meetLink: 
                     type: "string"
                     example: "https://meet.google.com/mdt-gvvq-amb"
-                startAt: 
-                    type: "date"
-                    example: "2025-04-20T19:50:13.034"
+                startAtIndex: 
+                    type: "number"
+                    description: index of the start at time in the schedule array
+                    example: 0
                 appointmentId: 
                     type: "string"
                     example: "6806661b54cce96fa19a1abc"
@@ -308,6 +315,17 @@ components:
                 seats: 
                     type: "number"
                     example: 25
+                title:
+                    type: "string"
+                    example: "الجلسة المجتمعية"
+                description:
+                    type: "string"
+                    example: "الجلسة المجتمعية اليوم سيتم التحدث عن الصحة النفسية"
+                tags:
+                    type: "array"
+                    items:
+                        type: "string"
+                    example: ["67ef9ba961a3840f1d2888db"]
 
         AddCommunitySessionMessage: 
             type: "object"
@@ -502,28 +520,46 @@ components:
                         type: "string"
                         example: "6806661b54cce96fa19a1235"
                     day: 
-                        type: "string"
-                        enum: ["sat", "sun", "mon", "tue", "wed", "thu", "fri"]
-                        example: "fri"
-                    startAtHour: 
-                        type: "string"
-                        example: "05:30"
-                        description: follow this style HH:MM until 23:59
+                        type: "date"
+                        example: "2025-04-20T20:50:13.034Z"
+                        # enum: ["sat", "sun", "mon", "tue", "wed", "thu", "fri"]
+                        # example: "fri"
                     duration:
                         type: "number"
                         example: 30
                     price: 
                         type: "number"
                         example: 200
+                    schedule:
+                        type: "array"
+                        items:
+                            type: "object"
+                            $ref: "#/components/schemas/AppointmentSchedule"
                     doctorData: 
                         type: "object"
                         $ref: "#/components/schemas/User"
 
+        AppointmentSchedule:
+            type: "object"
+            properties:
+                startAt:
+                    type: "string"
+                    example: "05:30"
+                isBooked:
+                    type: "boolean"
+                    example: false
+                sessionId:
+                    type: "string"
+                    example: "6806661b54cce96fa19a1958"
+        
         Session: 
             allOf: 
                 - $ref: "#/components/schemas/GeneralDocument"
                 - type: "object"
                   properties:
+                    appointmentId:
+                        type: "string"
+                        example: "6806661b54cce96fa19a1958"
                     doctorId: 
                         type: "string"
                         example: "6806661b54cce96fa19a1958"
@@ -555,6 +591,17 @@ components:
                         type: "string"
                         enum: ["pending", "confirmed", "canceled", "completed"]
                         example: "pending"
+                    title:
+                        type: "string"
+                        example: "الجلسة المجتمعية"
+                    description: 
+                        type: "string"
+                        example: "الجلسة المجتمعية اليوم سيتم التحدث عن الصحة النفسية"
+                    tags:
+                        type: "array"
+                        items:
+                            type: "string"
+                        example: ["67ef9ba961a3840f1d2888db"]
                     participationsData:  
                         type: "array"
                         items:
@@ -1590,6 +1637,7 @@ paths:
                                             type: "array"
                                             items:
                                                 $ref: "#/components/schemas/Appointment"
+        
         delete:
             tags:
                 - Appointments
@@ -1625,6 +1673,35 @@ paths:
                                                 appointmentId: 
                                                     type: "string"
                                                     example: "6806661b54cce96fa19a1999"
+        get:
+            tags:
+                - Appointments
+            summary: Get Appointment By ID
+            description: Any user can get appointment by id
+            parameters:
+                - name: id
+                  in: path
+                  description: Appointment ID
+                  schema: 
+                    type: string
+                  required: true
+                  example: "6806661b54cce96fa19a1999"
+            responses:
+                200:
+                    description: successful operation
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: "#/components/schemas/ApiResponseBase"
+                                    - type: object
+                                      properties:
+                                        success:
+                                            example: true
+                                        message:
+                                            example: "تم إرجاع الموعد بنجاح!"
+                                        data:
+                                            $ref: "#/components/schemas/Appointment"
 
     # Session Routes
     # General Sessions
@@ -1691,6 +1768,38 @@ paths:
                                             type: "array"
                                             items:
                                                 $ref: "#/components/schemas/Session"
+
+    /session/{id}:
+        get:
+            tags:
+                - Sessions
+            summary: Get Session By ID
+            description: Authntiacted User/Admin/Dotcor returned session based on filters
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: id
+                  in: path
+                  schema: 
+                    type: string
+                  description: Session ID
+                  required: true
+            responses:
+                200:
+                    description: successful operation
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: "#/components/schemas/ApiResponseBase"
+                                    - type: object
+                                      properties:
+                                        success:
+                                            example: "true"
+                                        message:
+                                            example: "تم إرجاع كل الجلسات المطلوبة بنجاح!"
+                                        data:
+                                            $ref: "#/components/schemas/Session"
     
     /sesssion/{id}/complete:
         patch:

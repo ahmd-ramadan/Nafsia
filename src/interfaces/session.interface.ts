@@ -4,6 +4,7 @@ import { IUser } from "./user.interface";
 
 export interface ISessionModel extends IDBModel {
     doctorId: string;
+    appointmentId: string;
     participations: string[];
     seats: number;
     bookedSeats: number;
@@ -13,6 +14,9 @@ export interface ISessionModel extends IDBModel {
     price: number;
     type: SessionTypes;
     status: SessionStatus;
+    title: string;
+    description: string;
+    tags: string[];
 } 
 
 export interface ISession extends ISessionModel {
@@ -24,7 +28,7 @@ export interface ICreatePrivateSessionQuery {
     appointmentId: string;
     participations: string[];
     meetLink: string;
-    startAt: Date;
+    startAtIndex: number;
 } 
 
 export interface ICreateCommunitySessionQuery {
@@ -34,4 +38,7 @@ export interface ICreateCommunitySessionQuery {
     startAt: Date;
     duration: number;
     seats: number;
+    title: string;
+    description?: string;
+    tags?: string[];
 } 

@@ -1,5 +1,5 @@
 import { SessionStatus, SessionTypes } from "../enums";
-import { ICreateCommunitySessionQuery, ICreatePrivateSessionQuery, ISessionModel } from "../interfaces";
+import { IAppointmentModel, ICreateCommunitySessionQuery, ICreatePrivateSessionQuery, ISessionModel } from "../interfaces";
 import { sessionRepository } from "../repositories";
 import { ApiError, CONFLICT, INTERNAL_SERVER_ERROR, NOT_FOUND, pagenation, UNAUTHORIZED } from "../utils";
 import { appointmentService } from "./appointment.service";
@@ -19,23 +19,49 @@ class SessionService {
         return await this.findSession({ _id: sessionId });
     }
 
+    private convertTimeToMilliSeconds(timeHouresAndMuintes: string): number {
+        const [hourse, minutes] = timeHouresAndMuintes.split(':');
+        const newMinutes = Number(+minutes) + (Number(+hourse) * 60);
+        return newMinutes * 60000;
+    }
+
     async createPrivateSession(data: ICreatePrivateSessionQuery) {
         try {
-            const { doctorId, duration, price } = await appointmentService.isAppointmentExist(data.appointmentId);
-            const newSessionData = {
+            const { startAtIndex, appointmentId } = data;
+            const { doctorId, duration, price, schedule, day } = await appointmentService.isAppointmentExist(data.appointmentId);
+            
+            if (startAtIndex >= schedule.length) {
+                throw new ApiError('الموعد غير متاح', CONFLICT)
+            }
+            const selectedAppointment = schedule[startAtIndex];
+            if (selectedAppointment.isBooked) {
+                throw new ApiError('الموعد غير متاح', CONFLICT)
+            }
+
+            const startAt = new Date(day).getTime() + this.convertTimeToMilliSeconds(selectedAppointment.startAt);
+
+            const newSessionData: Partial<ISessionModel> = {
                 doctorId,
                 duration,
                 price,
+                appointmentId,
                 participations: data.participations,
                 meetLink: data.meetLink,
-                startAt: data.startAt,
+                startAt: new Date(startAt),
                 seats: 1,
                 bookedSeats: 1,
                 type: SessionTypes.PRIVATE,
-                status: SessionStatus.PENDING
+                status: SessionStatus.CONFIRMED
             }
-            const isSessionOverlapped = await this.isOverlappedWithSession(newSessionData);
-            return await this.sessionDataSource.createOne(newSessionData, this.populatedArray);
+            const newSession = await this.sessionDataSource.createOne(newSessionData, this.populatedArray);
+            // const isSessionOverlapped = await this.isOverlappedWithSession(newSessionData);
+           
+            // update appointment schedule
+            schedule[startAtIndex].isBooked = true;
+            schedule[startAtIndex].sessionId = newSession._id;
+            await appointmentService.updateAppointmentSchedule({ appointmentId, schedule });
+            
+            return newSession;
         } catch(error) {
             if (error instanceof ApiError) {
                 throw error
@@ -64,7 +90,7 @@ class SessionService {
 
     async completedSessionByDoctor({ sessionId, doctorId }: { sessionId: string, doctorId: string }) {
        try {
-            const { doctorId: sessionDoctorId, status, startAt, duration } = await this.isSessionExist(sessionId);
+            const { doctorId: sessionDoctorId, status, startAt, duration, type, appointmentId } = await this.isSessionExist(sessionId);
             if (sessionDoctorId.toString() !== doctorId.toString()) {
                 throw new ApiError('ليس لديك الحق في اجراء هذا', UNAUTHORIZED);
             }
@@ -73,6 +99,19 @@ class SessionService {
             }
             if (new Date(startAt.getTime() + duration * 60000) > new Date()) {
                 throw new ApiError('الجلسة لم تنتهي بعد!', CONFLICT)
+            }
+
+            if(type === SessionTypes.PRIVATE) {
+                let  { schedule } = await appointmentService.isAppointmentExist(appointmentId) as IAppointmentModel;
+                schedule = schedule.map(appointment => {
+                    if(appointment.sessionId && appointment.isBooked && appointment?.sessionId.toString() === sessionId.toString()) {
+                        appointment.isBooked = false;
+                        appointment.sessionId = '';
+                    }
+                    return appointment;
+                })
+              
+                await appointmentService.updateAppointmentSchedule({ appointmentId, schedule });
             }
             return await this.sessionDataSource.updateOne({ _id: sessionId, doctorId }, { status: SessionStatus.COMPLETED }); 
        } catch(error) {

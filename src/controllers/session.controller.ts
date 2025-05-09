@@ -7,14 +7,14 @@ import { SessionStatus } from "../enums";
 
 
 export const craetePrivateSession = async(req: AuthenticatedRequest, res: Response) => {
-    const { startAt, meetLink, appointmentId } = createPrivateSessionSchema.parse(req.body);
+    const { startAtIndex, meetLink, appointmentId,  } = createPrivateSessionSchema.parse(req.body);
     const userId = req?.user?.userId as string;
 
     const newSession = await sessionService.createPrivateSession({
         participations: [ userId ],
         appointmentId,
         meetLink,
-        startAt
+        startAtIndex
     })
 
     res.status(CREATED).json({
@@ -45,7 +45,7 @@ export const confirmedPrivateSession = async(req: AuthenticatedRequest, res: Res
 }
 
 export const craeteCommunitySession = async(req: AuthenticatedRequest, res: Response) => {
-    const { duration, startAt, meetLink, seats } = createCommunitySessionSchema.parse(req.body);
+    const { duration, startAt, meetLink, seats, title, description, tags } = createCommunitySessionSchema.parse(req.body);
 
     const doctorId = req?.user?.userId as string;
 
@@ -55,7 +55,10 @@ export const craeteCommunitySession = async(req: AuthenticatedRequest, res: Resp
         duration,
         meetLink,
         startAt,
-        seats
+        seats,
+        title,
+        description,
+        tags
     })
 
     res.status(CREATED).json({
@@ -103,3 +106,16 @@ export const getAllSessions = async(req: AuthenticatedRequest, res: Response) =>
         data: allSessions
     })
 }
+
+export const getSessionById = async(req: AuthenticatedRequest, res: Response) => {
+    const { _id: sessionId } = paramsSchema.parse(req.params);
+
+    const session = await sessionService.isSessionExist(sessionId)
+
+    res.status(OK).json({
+        success: true,
+        message: 'تم إرحاع الجلسة بنجاح',
+        data: session
+    })
+}
+

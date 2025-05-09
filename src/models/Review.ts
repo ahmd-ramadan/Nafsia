@@ -36,7 +36,13 @@ reviewSchema.virtual('doctorData', {
     localField: 'doctorId',
     foreignField: '_id',
     ref: 'User',
-    justOne: true
+    justOne: true,
+    options: { 
+        // select: 'name avatar _id',
+        populate: {
+            path: 'doctorData',
+        }
+    }
 })
 reviewSchema.virtual('userData', {
     localField: 'userId',

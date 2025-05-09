@@ -13,7 +13,6 @@ import { doctorService } from "./doctor.service";
 import { cloudinaryService } from "./cloudinary.service";
 import { cloudinaryAvatarsFolder, cloudinaryLicensesFolder } from "../config";
 
-
 class AuthService extends BaseAuthService {
     
     async register(
@@ -30,7 +29,7 @@ class AuthService extends BaseAuthService {
             
             const userCredentials: ICreateUserQuery = { name, email, password: hashedPassword, phone, age, gender, role, specialization };
             // console.log(files)
-            if(files && files?.avatar?.length ) {
+            if(files && files?.avatar ) {
                 const { secure_url, public_id } = await cloudinaryService.uploadImage({
                     fileToUpload: files.avatar[0].path,
                     folderPath: cloudinaryAvatarsFolder
@@ -66,6 +65,9 @@ class AuthService extends BaseAuthService {
             const { specialization, medicalLicense, description } = data;
             if (!specialization) {
                 throw new ApiError('تخصص الدكتور مطلوب', BAD_REQUEST)
+            }
+            if(!description) {
+                throw new ApiError('وصف الدكتور مطلوب', BAD_REQUEST)
             }
             if (!medicalLicense) {
                 throw new ApiError('شهادة الدكتور مطلوبة', BAD_REQUEST)

@@ -4,7 +4,6 @@ import { ApiError, CREATED, OK, UNAUTHORIZED } from "../utils";
 import { forgotPasswordSchema, loginSchema, registerSchema, resendVerificationEmailSchema, resetPasswordSchema, verifyEmailSchema, verifyOtpSchema } from "../validation"
 import { AuthenticatedRequest } from "../interfaces";
 
-
 export const register = async (req: Request, res: Response) => {
     const { name, email, password, phone, gender, age, role, specialization, description } = registerSchema.parse(req.body);
     const files = req.files;

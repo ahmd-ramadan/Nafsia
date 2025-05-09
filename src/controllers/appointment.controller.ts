@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AuthenticatedRequest } from "../interfaces";
-import { createAppointmentSchema, getAllAppointmentsSchema, updateAppointmentSchema } from "../validation/";
+import { createAppointmentSchema, getAllAppointmentsSchema, paginationSchema, updateAppointmentSchema } from "../validation/";
 import { appointmentService } from "../services";
 import { CREATED, OK } from "../utils";
 import { paramsSchema } from "../validation";
@@ -46,13 +46,27 @@ export const deleteAppointment = async (req: AuthenticatedRequest, res: Response
 };
 
 export const getAllAppointments = async(req: Request, res: Response) => {
-    const { doctorId } = getAllAppointmentsSchema.parse(req.query);
+    const { doctorId, day, duration, price } = getAllAppointmentsSchema.parse(req.query);
+    const { pageNumber, pageSize } = paginationSchema.parse(req.query);
 
-    const appointments =  await appointmentService.getAllAppointmentsForDoctor(doctorId);
+    const appointments =  await appointmentService.findMany({ doctorId, day, duration, price, pageNumber, pageSize });
     
     res.status(OK).json({ 
         success: true,
-        message: 'تم إرجاع كل المواعيد', 
+        message: 'تم إرجاع كل المواعيد المطلوبة', 
         data: appointments 
     });
 }
+
+export const getAppointmentById = async (req: Request, res: Response) => {
+    const { _id: appointmentId } = paramsSchema.parse(req.params);
+
+    const appointment = await appointmentService.findOne({ _id: appointmentId });
+    
+    res.status(OK).json({ 
+        success: true,
+        message: 'تم إرجاع الموعد بنجاح', 
+        data: appointment 
+    });
+}
+
