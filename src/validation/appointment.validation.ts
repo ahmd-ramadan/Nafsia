@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { AppointmentStartTime, MongoDBObjectId } from "../utils";
 export const createAppointmentSchema = z.object({
-    day: z.coerce.date().max(new Date(), "لا يمكن إنشاء موعد في الماضي").transform((date) => {
+    day: z.coerce.date().min(new Date(), "لا يمكن إنشاء موعد في الماضي").transform((date) => {
         const newDate = new Date(date);
         newDate.setHours(0, 0, 0, 0);
         return newDate;
@@ -14,7 +14,7 @@ export const createAppointmentSchema = z.object({
 })
 
 export const updateAppointmentSchema = z.object({
-    day: z.coerce.date().max(new Date(), "لا يمكن إنشاء موعد في الماضي").optional().transform((date) => {
+    day: z.coerce.date().min(new Date(), "لا يمكن إنشاء موعد في الماضي").optional().transform((date) => {
         if (!date) return undefined;
         const newDate = new Date(date);
         newDate.setHours(0, 0, 0, 0);

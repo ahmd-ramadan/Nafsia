@@ -1,6 +1,4 @@
-import { schedule } from "node-cron";
 import { IAppointmentModel, IAppointmentSchedule, ICreateAppointmentQuery } from "../interfaces";
-import { Appointment } from "../models";
 import { appointmentRepository } from "../repositories";
 import { ApiError, CONFLICT, INTERNAL_SERVER_ERROR, NOT_FOUND, pagenation, UNAUTHORIZED } from "../utils";
 import { FilterQuery } from "mongoose";
@@ -162,8 +160,7 @@ class AppointmentService {
         if (price) query.price = { $gte: price };
         const { skip, limit } = pagenation({ page: pageNumber, size: pageSize });
         return await this.appointmentDataSource.findWithPopulate({}, this.populateArray, { skip, limit })
-    }
-    
+    }   
 }
 
 export const appointmentService = new AppointmentService();
