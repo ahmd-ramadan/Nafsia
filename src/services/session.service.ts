@@ -4,7 +4,6 @@ import { sessionRepository } from "../repositories";
 import { ApiError, CONFLICT, INTERNAL_SERVER_ERROR, NOT_FOUND, pagenation, UNAUTHORIZED } from "../utils";
 import { appointmentService } from "./appointment.service";
 
-  
 class SessionService {
 
     private readonly populatedArray = ['doctorData', 'participationsData'];
@@ -232,7 +231,7 @@ class SessionService {
             if (type) newQuery.type = type;
             if (status) newQuery.status = status;
             const { limit, skip } = pagenation({ page, size });
-            console.log(newQuery);
+            // console.log(newQuery);
             return await this.sessionDataSource.findWithPopulate(newQuery, this.populatedArray, { skip, limit })
         } catch(error) {
             if (error instanceof ApiError) {

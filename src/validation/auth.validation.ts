@@ -29,11 +29,11 @@ export const registerSchema = z
     })
     .refine((data) => {
         if (data.role === UserRolesEnum.DOCTOR) {
-            return data.age !== undefined && data.gender !== undefined && data.specialization;
+            return data.age !== undefined && data.gender !== undefined && data.specialization && data.description !== undefined;
         }
         return true;
     }, {
-        message: 'Doctors must provide age, gender, and specialization',
+        message: 'Doctors must provide age, gender, description, and specialization',
         path: ['role'],
     });
 

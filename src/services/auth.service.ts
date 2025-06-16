@@ -27,7 +27,7 @@ class AuthService extends BaseAuthService {
     
             const hashedPassword = await HashingService.hash(password);
             
-            const userCredentials: ICreateUserQuery = { name, email, password: hashedPassword, phone, age, gender, role, specialization };
+            const userCredentials: ICreateUserQuery = { name, email, password: hashedPassword, phone, age, gender, role, specialization, description };
             // console.log(files)
             if(files && files?.avatar ) {
                 const { secure_url, public_id } = await cloudinaryService.uploadImage({

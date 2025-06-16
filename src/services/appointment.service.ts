@@ -159,7 +159,7 @@ class AppointmentService {
         if (duration) query.duration = { $gte: duration };
         if (price) query.price = { $gte: price };
         const { skip, limit } = pagenation({ page: pageNumber, size: pageSize });
-        return await this.appointmentDataSource.findWithPopulate({}, this.populateArray, { skip, limit })
+        return await this.appointmentDataSource.findWithPopulate(query, this.populateArray, { skip, limit })
     }   
 }
 
