@@ -9,6 +9,7 @@ import { savedPostsRouter } from './savedPosts.routes';
 import { reactRouter } from './react.routes';
 import { userRouter } from './user.routes';
 import { messageRouter } from './message.routes';
+import { measurementRouter } from './measuremnt.routes';
 
 const router = Router();
 
@@ -22,5 +23,6 @@ router.use('/session', sessionRouter)
 router.use('/review', reviewRouter)
 router.use('/saved-posts', savedPostsRouter)
 router.use('/message', messageRouter)
+router.use('/measurement', measurementRouter)
 
 export default router;

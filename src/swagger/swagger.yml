@@ -3,6 +3,7 @@ servers:
   - url: http://localhost:8000/api/v1
   - url: https://localhost:8000/api/v1
   - url: https://nafsia.up.railway.app/api/v1
+  - url: https://nafsia-v2.up.railway.app
 info:
     title: 'Nafsia APIs Document'
     version: '1.0.0'
@@ -159,6 +160,7 @@ components:
                         type: string
                         format: binary
                     description: صورة الرخصة الطبية للطبيب 
+        
         Login:
             type: "object"
             required: 
@@ -210,7 +212,6 @@ components:
                         type: string
                         format: binary
                     description: صورة الرخصة الطبية للطبيب 
-        
 
         UpdatePassword: 
             type: "object"
@@ -354,6 +355,44 @@ components:
                 comment: 
                     type: "string"
                     example: "لقد أستفدت جدا من توجيهات الدكتور"
+
+        AddMeasurement: 
+            type: "object"
+            required:
+                - occupation
+                - gender
+                - age
+                - sleep_quality
+                - bmi_category
+                - heart_rate
+                - systolic_bp
+                - diastolic_bp
+                - daily_steps
+            properties:
+                occupation: 
+                    type: "string"
+                    example: "Engineer"
+                gender: 
+                    type: "string"
+                    example: "Male"
+                bmi_category: 
+                    type: "string"
+                    example: "Normal"
+                age: 
+                    type: "number"
+                sleep_quality: 
+                    type: "number"
+                heart_rate: 
+                    type: "number"
+                daily_steps: 
+                    type: "number"
+                systolic_bp: 
+                    type: "number"
+                diastolic_bp: 
+                    type: "number"
+                stress_level: 
+                    type: "number"
+                    example: 7
 
         # All Documents Scheams
         GeneralDocument: 
@@ -648,6 +687,39 @@ components:
                     userData:
                         type: "object"
                         $ref: "#/components/schemas/User"
+        
+        Measurement: 
+            allOf: 
+                - $ref: "#/components/schemas/GeneralDocument"
+                - type: "object"
+                  properties:
+                    ruserId: 
+                        type: "string"
+                        example: "6806661b54cce96fa19a1958"
+                    occupation: 
+                        type: "string"
+                        example: "Engineer"
+                    gender: 
+                        type: "string"
+                        example: "Male"
+                    bmi_category: 
+                        type: "string"
+                        example: "Normal"
+                    age: 
+                        type: "number"
+                    sleep_quality: 
+                        type: "number"
+                    heart_rate: 
+                        type: "number"
+                    daily_steps: 
+                        type: "number"
+                    systolic_bp: 
+                        type: "number"
+                    diastolic_bp: 
+                        type: "number"
+                    stress_level:
+                        type: "number"
+                        example: 7
 
 paths:
     # Auth Routes
@@ -2267,3 +2339,67 @@ paths:
                                                 reviewId: 
                                                     type: "string"
                                                     example: "67ef9ba961a3840f1d2888db"
+
+
+    # Measurements routes 
+    /measurement:
+        post:
+            tags:
+                - Measurements
+            summary: Add Measurement
+            description: User add his measurement
+            security:
+                - bearerAuth: []
+            requestBody:
+                description: Add Measurement object
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/AddMeasurement"
+            responses:
+                201:
+                    description: successful operation
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: "#/components/schemas/ApiResponseBase"
+                                    - type: object
+                                      properties:
+                                        success:
+                                            example: "true"
+                                        message:
+                                            example: "تم إضافة القياسات بنجاح بنجاح!"
+                                        data:
+                                            $ref: "#/components/schemas/Measurement"
+
+        get:
+            tags:
+                -  Measurements
+            summary: get All Measurements
+            description: Any user can get measurement
+            parameters: 
+                - name: userId
+                  in: query
+                  description: User ID
+                  schema:
+                    type: string
+                  required: true
+            responses:
+                200:
+                    description: successful operation
+                    content:
+                    application/json:
+                        schema:
+                            allOf:
+                                - $ref: "#/components/schemas/ApiResponseBase"
+                                - type: object
+                                  properties:
+                                    success:
+                                        example: true
+                                    message:
+                                        example: "تم إرجاع كل القياسات المطلوبة للمستخدم بنجاح!"
+                                    data:
+                                        type: "array"
+                                        items:
+                                            $ref: "#/components/schemas/Measurement"   
