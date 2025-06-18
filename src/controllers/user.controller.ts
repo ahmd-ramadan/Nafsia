@@ -2,11 +2,11 @@ import { Response } from "express";
 import { authService, userService } from "../services";
 import { OK } from "../utils";
 import { AuthenticatedRequest } from "../interfaces";
-import { getAllUsersSchema, paginationSchema, searchOnDoctorSchema, updateUserPasswordSchema, updateUserProfileSchema } from "../validation";
+import { getAllUsersSchema, getUserProfileSchema, paginationSchema, searchOnDoctorSchema, updateUserPasswordSchema, updateUserProfileSchema } from "../validation";
 
 
 export const getUserProfile = async (req: AuthenticatedRequest, res: Response) => {
-    const userId = req?.user?.userId as string;
+    const { userId } = getUserProfileSchema.parse(req.body)
 
     const userProfile = await userService.isUserExist(userId)
 

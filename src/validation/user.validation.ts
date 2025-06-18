@@ -42,3 +42,7 @@ export const getAllUsersSchema = z.object({
 export const searchOnDoctorSchema = z.object({
     q: z.string(),
 })
+
+export const getUserProfileSchema = z.object({
+    userId: z.string(),
+})
