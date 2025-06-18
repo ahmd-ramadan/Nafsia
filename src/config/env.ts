@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 import { logger } from "../utils";
 
-dotenv.config({ path: '.env.local' })
+dotenv.config({ path: '.env' })
 
 function env(name: string, required?: true): string;
 
