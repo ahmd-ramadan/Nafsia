@@ -65,7 +65,7 @@ userSchema.virtual('doctorData', {
     foreignField: 'userId',  
     justOne: true, 
     options: {
-        select: 'specialization rate balance isApproved medicalLicense'
+        select: 'specialization rate balance isApproved description medicalLicense'
     }
 });
 

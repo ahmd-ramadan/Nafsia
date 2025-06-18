@@ -108,8 +108,7 @@ export default class GeneralRepository<T, Response = T> {
         //     }
         // }
         return nonPopulatedResponse as Response[];
-    }
-      
+    }      
 
     async findById(objectId: string): Promise<T | null> {
         return this.dbClient.findById(objectId);
