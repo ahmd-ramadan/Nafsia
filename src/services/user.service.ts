@@ -33,7 +33,7 @@ class UserService {
     async updateProfile({ userId, data, files }: { userId: string, data: Partial<IUserModel> & { specialization?: string, description?: string }, files: any }) {
         const { name, age, phone, specialization, description } = data;
 
-        const { avatar, doctorData: { medicalLicense } } = await this.isUserExist(userId);
+        const { avatar, doctorData } = await this.isUserExist(userId);
 
         const updatedData: Partial<IUserModel> = {}
         if (name) updatedData.name = name;
@@ -48,8 +48,11 @@ class UserService {
                 fileToUpload: files.medicalLicense[0].path,
                 folderPath: cloudinaryLicensesFolder 
             });
-            if (medicalLicense?.secure_url && medicalLicense?.public_id) {
-                await cloudinaryService.deleteImage(medicalLicense?.public_id);
+            if (doctorData) {
+                const { medicalLicense } = doctorData;
+                if(medicalLicense && medicalLicense?.secure_url && medicalLicense?.public_id) {
+                    await cloudinaryService.deleteImage(medicalLicense?.public_id);
+                }
             }
             updatedDoctorData.medicalLicense = {
                 secure_url,
